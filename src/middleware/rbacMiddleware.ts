@@ -1,15 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import pool from '../config/database';
 
-interface AuthRequest extends Request {
-  user?: { id: number; role_id: number };
-}
-
 export const checkPermission = (requiredPermission: string) => {
-  return async (req: AuthRequest, res: Response, next: NextFunction) => {
-    const userId = req.user?.id;
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const user = (req.session as any)?.user;
 
-    if (!userId) return res.status(401).send('Unauthorized');
+    if (!user) return res.redirect('/login');
 
     const [rows] = await pool.query(`
       SELECT p.name FROM users u
@@ -17,7 +13,7 @@ export const checkPermission = (requiredPermission: string) => {
       JOIN role_permissions rp ON r.id = rp.role_id
       JOIN permissions p ON rp.permission_id = p.id
       WHERE u.id = ?
-    `, [userId]);
+    `, [user.id]);
 
     const permissions = (rows as any[]).map(row => row.name);
 

@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "express-session": "^1.19.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
+    "@types/express-session": "^1.19.0"
+  }
+}
